@@ -8,17 +8,40 @@ SphinxInfo = provider(
 
 
 def _sphinx_html_impl(ctx):
+    input_dir = ctx.actions.declare_directory(ctx.label.name + "_input")
     output_dir = ctx.actions.declare_directory(ctx.label.name + "_html")
+
+    all_files = ctx.files.config + ctx.files.srcs
+
+    # Use paths.dirname to handle cases where config is generated.
+    root_dir = paths.dirname(ctx.file.config.short_path)
+
+    shell_cmds = []
+    for f in all_files:
+        if not f.short_path.startswith(root_dir):
+            fail("Sources must be at or below config directory: {}.".format(f.short_path))
+
+        dest = paths.join(input_dir.path, f.short_path[len(root_dir) + 1:])
+        shell_cmds.append("mkdir -p {}; cp {} {}".format(paths.dirname(dest), f.path, dest))
+
+    ctx.actions.run_shell(
+        outputs = [input_dir],
+        inputs = all_files,
+        mnemonic = "SphinxCollect",
+        command = "; ".join(shell_cmds),
+        progress_message = "Collecting Sphinx source documents for {}.".format(ctx.label.name),
+    )
 
     args = ctx.actions.args()
     args.add("-b", "html")
+    args.add("-q")
     args.add_all(ctx.attr.args)
-    args.add(ctx.file.config.dirname)
+    args.add(input_dir.path)
     args.add(output_dir.path)
 
     ctx.actions.run(
         outputs = [output_dir],
-        inputs = ctx.files.config + ctx.files.srcs,
+        inputs = [input_dir],
         executable = ctx.executable._sphinx_build,
         arguments = [args],
         mnemonic = "SphinxBuild",
@@ -60,13 +83,10 @@ sphinx_html_gen = rule(
 
 
 def _sphinx_view_impl(ctx):
-    shell_cmd = [
-        ctx.attr.open_cmd,
-        ctx.attr.generator[SphinxInfo].open_uri,
-    ]
+    shell_cmd = ctx.attr.open_cmd.format(ctx.attr.generator[SphinxInfo].open_uri)
 
     script = ctx.actions.declare_file("{}.sh".format(ctx.label.name))
-    ctx.actions.write(script, ' '.join(shell_cmd), is_executable = True)
+    ctx.actions.write(script, shell_cmd, is_executable = True)
 
     runfiles = ctx.runfiles(files = ctx.files.generator)
 
@@ -84,7 +104,7 @@ sphinx_view = rule(
         ),
         "open_cmd": attr.string(
             doc = "Shell open command for Sphinx URI.",
-            default = "xdg-open",
+            default = "xdg-open {} 1> /dev/null",
         ),
     },
     executable = True,

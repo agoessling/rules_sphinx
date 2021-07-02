@@ -1,9 +1,11 @@
+import sys
+
 import sphinx.cmd.build
 
 
 def main():
-  sphinx.cmd.build.main()
+  return sphinx.cmd.build.main()
 
 
 if __name__ == '__main__':
-  main()
+  sys.exit(main())
