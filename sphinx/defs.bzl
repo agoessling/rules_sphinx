@@ -8,24 +8,21 @@ SphinxInfo = provider(
 
 
 def _sphinx_html_impl(ctx):
-    input_dir = ctx.actions.declare_directory(ctx.label.name + "_input")
+    sandbox = ctx.actions.declare_directory(ctx.label.name + "_sandbox")
     output_dir = ctx.actions.declare_directory(ctx.label.name + "_html")
 
     all_files = ctx.files.config + ctx.files.srcs
 
     # Use paths.dirname to handle cases where config is generated.
-    root_dir = paths.dirname(ctx.file.config.short_path)
+    root_dir = paths.join(sandbox.path, paths.dirname(ctx.file.config.short_path))
 
     shell_cmds = []
     for f in all_files:
-        if not f.short_path.startswith(root_dir):
-            fail("Sources must be at or below config directory: {}.".format(f.short_path))
-
-        dest = paths.join(input_dir.path, f.short_path[len(root_dir) + 1:])
+        dest = paths.join(sandbox.path, f.short_path)
         shell_cmds.append("mkdir -p {}; cp {} {}".format(paths.dirname(dest), f.path, dest))
 
     ctx.actions.run_shell(
-        outputs = [input_dir],
+        outputs = [sandbox],
         inputs = all_files,
         mnemonic = "SphinxCollect",
         command = "; ".join(shell_cmds),
@@ -36,12 +33,12 @@ def _sphinx_html_impl(ctx):
     args.add("-b", "html")
     args.add("-q")
     args.add_all(ctx.attr.args)
-    args.add(input_dir.path)
+    args.add(root_dir)
     args.add(output_dir.path)
 
     ctx.actions.run(
         outputs = [output_dir],
-        inputs = [input_dir],
+        inputs = [sandbox],
         executable = ctx.executable._sphinx_build,
         arguments = [args],
         mnemonic = "SphinxBuild",

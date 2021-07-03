@@ -8,6 +8,8 @@ Welcome to Sphinx Test's documentation!
    generated
    subdir/test_file
 
+.. literalinclude:: /../external_file.txt
+
 
 Indices and tables
 ==================
