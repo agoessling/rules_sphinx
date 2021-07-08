@@ -10,8 +10,8 @@ genrule(
 sphinx_html(
     name = "test_docs",
     config = "conf.py",
+    index = "test_index.rst",  # Test non-canonical naming.
     srcs = [
-        "index.rst",
         "generated.rst",
         "//test/root_dir/subdir:test_file.rst",
         "//test:external_file.txt",
