@@ -13,6 +13,12 @@ http_archive(
     name = "rules_sphinx",
     # See release page for latest version url and sha.
 )
+
+load("@rules_sphinx//sphinx:direct_repositories.bzl", "rules_sphinx_direct_deps")
+rules_sphinx_direct_deps()
+
+load("@rules_sphinx//sphinx:indirect_repositories.bzl", "rules_sphinx_indirect_deps")
+rules_sphinx_indirect_deps()
 ```
 
 ## Rules
@@ -20,7 +26,7 @@ http_archive(
 * `sphinx_html_gen` - Generates HTML documentation into `[NAME]_html` directory.
 * `sphinx_view` - Given an HTML generator, create target to launch viewer.
 * `sphinx_html` - A macro that creates a `sphinx_html_gen` and an associated `sphinx_view` with the
-  `[NAME].view` verb.
+`[NAME].view` verb.
 
 ## Examples
 
