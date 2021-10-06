@@ -7,6 +7,7 @@ py_binary(
     srcs = ["sphinx_build_wrapper.py"],
     deps = [
         requirement("sphinx"),
+        requirement("sphinx_book_theme"),
         requirement("sphinx_rtd_theme"),
     ],
     visibility = ["//visibility:public"],
