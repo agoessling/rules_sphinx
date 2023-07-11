@@ -32,12 +32,12 @@ rules_sphinx_indirect_deps()
 
 To build the test documentation use:
 
-```Shell
-bazel build @rules_sphinx//test:test_docs
+```shell
+bazel build @rules_sphinx//test/root_dir:test_docs
 ```
 
 To build and view test documentation use:
 
-```Shell
-bazel run @rules_sphinx//test:test_docs.view
+```shell
+bazel run @rules_sphinx//test/root_dir:test_docs.view
 ```
