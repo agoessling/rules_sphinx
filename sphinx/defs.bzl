@@ -43,7 +43,7 @@ def _sphinx_html_impl(ctx):
     ctx.actions.run(
         outputs = [output_dir],
         inputs = [sandbox],
-        executable = ctx.executable._sphinx_build,
+        executable = ctx.executable.sphinx_build,
         arguments = [args],
         mnemonic = "SphinxBuild",
         progress_message = "Building Sphinx HTML documentation for {}.".format(ctx.label.name),
@@ -78,8 +78,8 @@ sphinx_html_gen = rule(
         "args": attr.string_list(
             doc = "sphinx-build argument list.",
         ),
-        "_sphinx_build": attr.label(
-            doc = "sphinx-build wrapper.",
+        "sphinx_build": attr.label(
+            doc = "sphinx-build executable.",
             default = Label("@rules_sphinx//sphinx/tools:sphinx_build_wrapper"),
             executable = True,
             cfg = "exec",
