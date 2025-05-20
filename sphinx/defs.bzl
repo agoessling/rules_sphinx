@@ -18,7 +18,7 @@ def _sphinx_html_impl(ctx):
     shell_cmds = [
         "mkdir -p {}".format(root_dir),
         "cp {} {}".format(ctx.file.config.path, paths.join(root_dir, "conf.py")),
-        "cp {} {}".format(ctx.file.index.path, paths.join(root_dir, "index.rst")),
+        "cp {} {}.{}".format(ctx.file.index.path, paths.join(root_dir, "index"), ctx.file.index.extension),
     ]
 
     for f in ctx.files.srcs:
