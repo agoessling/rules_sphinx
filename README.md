@@ -5,6 +5,14 @@ Rules for building [Sphinx](https://www.sphinx-doc.org/en/master/) documentation
 
 ## Installation
 
+### bzlmod
+To incorporate `rules_sphinx` into your bzlmod project, add the following to your `MODULE.bazel` file.
+
+```starlark
+# See release page for latest version
+bazel_dep(name = "rules_sphinx", version = "0.0.0")
+```
+
 ### WORKSPACE
 To incorporate `rules_sphinx` into your project at the following to your `WORKSPACE` file.
 
