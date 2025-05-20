@@ -46,6 +46,9 @@ def _sphinx_html_impl(ctx):
         executable = ctx.executable.sphinx_build,
         arguments = [args],
         mnemonic = "SphinxBuild",
+        execution_requirements = {
+            "requires-network": "1" if ctx.attr.allow_network else "0",
+        },
         progress_message = "Building Sphinx HTML documentation for {}.".format(ctx.label.name),
     )
 
@@ -83,6 +86,10 @@ sphinx_html_gen = rule(
             default = Label("@rules_sphinx//sphinx/tools:sphinx_build_wrapper"),
             executable = True,
             cfg = "exec",
+        ),
+        "allow_network": attr.bool(
+            doc = "Allow Sphinx build to make network requests (e.g. to download fonts)",
+            default = False,
         ),
     },
 )
