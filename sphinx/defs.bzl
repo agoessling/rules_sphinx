@@ -18,7 +18,7 @@ def _sphinx_html_impl(ctx):
     shell_cmds = [
         "mkdir -p {}".format(root_dir),
         "cp {} {}".format(ctx.file.config.path, paths.join(root_dir, "conf.py")),
-        "cp {} {}".format(ctx.file.index.path, paths.join(root_dir, "index.rst")),
+        "cp {} {}.{}".format(ctx.file.index.path, paths.join(root_dir, "index"), ctx.file.index.extension),
     ]
 
     for f in ctx.files.srcs:
@@ -43,9 +43,12 @@ def _sphinx_html_impl(ctx):
     ctx.actions.run(
         outputs = [output_dir],
         inputs = [sandbox],
-        executable = ctx.executable._sphinx_build,
+        executable = ctx.executable.sphinx_build,
         arguments = [args],
         mnemonic = "SphinxBuild",
+        execution_requirements = {
+            "requires-network": "1" if ctx.attr.allow_network else "0",
+        },
         progress_message = "Building Sphinx HTML documentation for {}.".format(ctx.label.name),
     )
 
@@ -78,11 +81,15 @@ sphinx_html_gen = rule(
         "args": attr.string_list(
             doc = "sphinx-build argument list.",
         ),
-        "_sphinx_build": attr.label(
-            doc = "sphinx-build wrapper.",
+        "sphinx_build": attr.label(
+            doc = "sphinx-build executable.",
             default = Label("@rules_sphinx//sphinx/tools:sphinx_build_wrapper"),
             executable = True,
             cfg = "exec",
+        ),
+        "allow_network": attr.bool(
+            doc = "Allow Sphinx build to make network requests (e.g. to download fonts)",
+            default = False,
         ),
     },
 )
