@@ -1,7 +1,0 @@
-# Overrides WORKSPACE when using bzlmod.
-#
-# If rules_sphinx decides to only support bzlmod and not WORKSPACE, the following
-# files may be deleted:
-#   * WORKSPACE
-#   * WORKSPACE.bzlmod
-#   * sphinx/direct_repositories.bzl
