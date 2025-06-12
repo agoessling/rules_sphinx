@@ -1,7 +1,7 @@
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_python//python/pip_install:requirements.bzl", "compile_pip_requirements")
 
-load("@pip_deps//:requirements.bzl", "requirement")
+load("@sphinx_deps//:requirements.bzl", "requirement")
 
 compile_pip_requirements(
     name = "requirements",
