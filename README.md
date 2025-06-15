@@ -5,22 +5,11 @@ Rules for building [Sphinx](https://www.sphinx-doc.org/en/master/) documentation
 
 ## Installation
 
-### WORKSPACE
-To incorporate `rules_sphinx` into your project at the following to your `WORKSPACE` file.
+To incorporate `rules_sphinx` into your bzlmod project, add the following to your `MODULE.bazel` file.
 
-```Starlark
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
-    name = "rules_sphinx",
-    # See release page for latest version url and sha.
-)
-
-load("@rules_sphinx//sphinx:direct_repositories.bzl", "rules_sphinx_direct_deps")
-rules_sphinx_direct_deps()
-
-load("@rules_sphinx//sphinx:indirect_repositories.bzl", "rules_sphinx_indirect_deps")
-rules_sphinx_indirect_deps()
+```starlark
+# See release page for latest version
+bazel_dep(name = "rules_sphinx", version = "0.0.0")
 ```
 
 ## Usage
